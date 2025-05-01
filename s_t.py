@@ -1,37 +1,29 @@
 import os
 import streamlit as st
 from bokeh.models.widgets import Button
-#from bokeh.io import show
-#from bokeh.models import Button
 from bokeh.models import CustomJS
 from streamlit_bokeh_events import streamlit_bokeh_events
 from PIL import Image
 import time
 import glob
-
-
-
 from gtts import gTTS
 from googletrans import Translator
-
 
 st.title("TRADUCTOR.")
 st.subheader("Escucho lo que quieres traducir.")
 
+image = Image.open('language.png')
+st.image(image, width=300)
 
-image = Image.open('OIG7.jpg')
-
-st.image(image,width=300)
 with st.sidebar:
     st.subheader("Traductor.")
     st.write("Presiona el botón, cuando escuches la señal "
-                 "habla lo que quieres traducir, luego selecciona"   
-                 " la configuración de lenguaje que necesites.")
-
+             "habla lo que quieres traducir, luego selecciona"   
+             " la configuración de lenguaje que necesites.")
 
 st.write("Toca el Botón y habla lo que quires traducir")
 
-stt_button = Button(label=" Escuchar  🎤", width=300,  height=50)
+stt_button = Button(label=" Escuchar  🎤", width=300, height=50)
 
 stt_button.js_on_event("button_click", CustomJS(code="""
     var recognition = new webkitSpeechRecognition();
@@ -73,14 +65,16 @@ if result:
     text = str(result.get("GET_TEXT"))
     in_lang = st.selectbox(
         "Selecciona el lenguaje de Entrada",
-        ("Inglés", "Español", "Bengali", "Coreano", "Mandarín", "Japonés"),
+        ("Inglés", "Español", "Árabe", "Hindi", "Coreano", "Mandarín", "Japonés"),
     )
     if in_lang == "Inglés":
         input_language = "en"
     elif in_lang == "Español":
         input_language = "es"
-    elif in_lang == "Bengali":
-        input_language = "bn"
+    elif in_lang == "Árabe":
+        input_language = "ar"
+    elif in_lang == "Hindi":
+        input_language = "hi"
     elif in_lang == "Coreano":
         input_language = "ko"
     elif in_lang == "Mandarín":
@@ -90,14 +84,16 @@ if result:
     
     out_lang = st.selectbox(
         "Selecciona el lenguaje de salida",
-        ("Inglés", "Español", "Bengali", "Coreano", "Mandarín", "Japonés"),
+        ("Inglés", "Español", "Árabe", "Hindi", "Coreano", "Mandarín", "Japonés"),
     )
     if out_lang == "Inglés":
         output_language = "en"
     elif out_lang == "Español":
         output_language = "es"
-    elif out_lang == "Bengali":
-        output_language = "bn"
+    elif out_lang == "Árabe":
+        output_language = "ar"
+    elif out_lang == "Hindi":
+        output_language = "hi"
     elif out_lang == "Coreano":
         output_language = "ko"
     elif out_lang == "Mandarín":
@@ -112,10 +108,8 @@ if result:
             "Español",
             "Reino Unido",
             "Estados Unidos",
-            "Canada",
             "Australia",
             "Irlanda",
-            "Sudáfrica",
         ),
     )
     
@@ -123,20 +117,14 @@ if result:
         tld = "com"
     elif english_accent == "Español":
         tld = "com.mx"
-    
     elif english_accent == "Reino Unido":
         tld = "co.uk"
     elif english_accent == "Estados Unidos":
         tld = "com"
-    elif english_accent == "Canada":
-        tld = "ca"
     elif english_accent == "Australia":
         tld = "com.au"
     elif english_accent == "Irlanda":
         tld = "ie"
-    elif english_accent == "Sudáfrica":
-        tld = "co.za"
-    
     
     def text_to_speech(input_language, output_language, text, tld):
         translation = translator.translate(text, src=input_language, dest=output_language)
@@ -148,7 +136,6 @@ if result:
             my_file_name = "audio"
         tts.save(f"temp/{my_file_name}.mp3")
         return my_file_name, trans_text
-    
     
     display_output_text = st.checkbox("Mostrar el texto")
     
@@ -162,7 +149,6 @@ if result:
         if display_output_text:
             st.markdown(f"## Texto de salida:")
             st.write(f" {output_text}")
-    
     
     def remove_files(n):
         mp3_files = glob.glob("temp/*mp3")
